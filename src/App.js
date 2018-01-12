@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
+
 let defaultStyle = {
   color: '#fff',
-};
+}
+
 let fakeServerData = {
   user: {
     name: 'David',
@@ -10,45 +12,46 @@ let fakeServerData = {
       {
         name: 'My favorites',
         songs: [
-          {name: 'Beat It', duration: 1345},
-          {name: 'Channelloni Makaroni', duration: 1236},
-          {name: 'Rosa helikopter', duration: 2345}
+          { name: 'Beat It', duration: 1345 },
+          { name: 'Channelloni Makaroni', duration: 1236 },
+          { name: 'Rosa helikopter', duration: 2345 }
         ]
       },
       {
         name: 'Discovery Weekly',
         songs: [
-          {name: 'Le Song', duration: 3456},
-          {name: 'The song', duration: 4567},
-          {name: 'Sangen', duration: 5678}
+          { name: 'Le Song', duration: 3456 },
+          { name: 'The song', duration: 4567 },
+          { name: 'Sangen', duration: 5678 }
         ]
       },
       {
         name: 'Another playlist - the best',
         songs: [
-          {name: 'Beat It', duration: 6789},
-          {name: 'Channelloni Makaroni', duration: 7890},
-          {name: 'Rosa helikopter', duration: 8901}
+          { name: 'Beat It', duration: 6789 },
+          { name: 'Channelloni Makaroni', duration: 7890 },
+          { name: 'Rosa helikopter', duration: 8901 }
         ]
       },
       {
         name: 'Playlist yeah',
         songs: [
-          {name: 'Le Song', duration: 3456},
-          {name: 'The song', duration: 4567},
-          {name: 'Sangen', duration: 5678}
+          { name: 'Le Song', duration: 3456 },
+          { name: 'The song', duration: 4567 },
+          { name: 'Sangen', duration: 5678 }
         ]
       }
     ]
   }
-};
+}
+
 class PlaylistCounter extends Component {
   render() {
     return (
-            <div style={{...defaultStyle, width: '40%', display: 'inline-block'}}>
-              <h2>{this.props.playlists && this.props.playlists.length} playlists</h2>
-            </div>
-            );
+      <div style={{ ...defaultStyle, width: '40%', display: 'inline-block' }}>
+        <h2>{this.props.playlists && this.props.playlists.length} playlists</h2>
+      </div>
+    );
   }
 }
 ;
@@ -63,77 +66,81 @@ class HoursCounter extends Component {
     }, 0);
 
     return (
-            <div style={{...defaultStyle, width: '40%', display: 'inline-block'}}>
-              <h2>{Math.round(totalDuration / 60)} hours</h2>
-            </div>
-            );
+      <div style={{ ...defaultStyle, width: '40%', display: 'inline-block' }}>
+        <h2>{Math.round(totalDuration / 60)} hours</h2>
+      </div>
+    );
   }
 }
-;
 
 class Filter extends Component {
   render() {
     return (
-            <div style={defaultStyle}>
-              <img />
-              <input type="text" />
-            </div>
-            );
+      <div style={defaultStyle}>
+        <img />
+        <input type="text" onKeyUp={event => this.props.onTextChange(event.target.value)} />
+      </div>
+    );
   }
 }
-;
 
 class Playlist extends Component {
   render() {
     let playlist = this.props.playlist;
     return (
-            <div style={{...defaultStyle, display: 'inline-block', width: "25%"}}>
-              <img />
-              <h3>{playlist.name}</h3>
-              <ul>
-                {this.props.playlist.songs.map(song =>
-                    <li>{song.name}</li>
-                  )}
-              </ul>
-            </div>
-            );
+      <div style={{ ...defaultStyle, display: 'inline-block', width: "25%" }}>
+        <img />
+        <h3>{playlist.name}</h3>
+        <ul>
+          {this.props.playlist.songs.map(song =>
+            <li>{song.name}</li>
+          )}
+        </ul>
+      </div>
+    );
   }
 }
-;
 
 class App extends Component {
   constructor() {
     super();
 
-    this.state = {serverData: {}};
+    this.state = {
+      serverData: {},
+      filterString: '',
+    };
   }
 
   componentDidMount() {
     setTimeout(() => {
-      this.setState({serverData: fakeServerData});
-    }, 2000);
+      this.setState({ serverData: fakeServerData });
+    }, 1000);
   }
 
   render() {
     return (
-            <div className="App">
-              {this.state.serverData.user ?
-                          <div>
-                            <h1 style={{...defaultStyle, 'font-size': '54px'}}>
-                              {this.state.serverData.user.name}'s Playlist
-                            </h1>
-                            <PlaylistCounter playlists={this.state.serverData.user && this.state.serverData.user.playlists} />
-                            <HoursCounter playlists={this.state.serverData.user && this.state.serverData.user.playlists} />
-                            <Filter />
-                            {this.state.serverData.user.playlists.map(playlist =>
-                                    <Playlist playlist={playlist}/>
-                                )}
-                          </div> : <h1 style={{...defaultStyle}}>Loading...</h1>
-              }
-            </div>
-            );
+      <div className="App">
+        {this.state.serverData.user ?
+          <div>
+            <h1 style={{ ...defaultStyle, 'font-size': '54px' }}>
+              {this.state.serverData.user.name}'s Playlist
+                                        </h1>
+            <PlaylistCounter playlists={this.state.serverData.user && this.state.serverData.user.playlists} />
+            <HoursCounter playlists={this.state.serverData.user && this.state.serverData.user.playlists} />
+            <Filter onTextChange={text => {
+              this.setState({ filterString: text })
+            }
+            } />
+            {this.state.serverData.user.playlists.filter(playlist =>
+              playlist.name.toLowerCase().includes(this.state.filterString.toLowerCase())
+            ).map(playlist =>
+              <Playlist playlist={playlist} />
+              )}
+          </div> : <h1 style={{ ...defaultStyle }}>Loading...</h1>
+        }
+      </div>
+    );
   }
 }
-;
 
 export default App;
